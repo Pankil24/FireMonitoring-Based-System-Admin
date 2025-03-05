@@ -1,0 +1,54 @@
+@import 'tailwindcss';
+
+/* Layout */
+.app-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  background-color: #1f2937;
+  color: white;
+  height: 100vh;
+  padding: 1rem;
+  transition: width 0.3s ease;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+/* Sidebar links */
+.nav-link {
+  display: flex;
+  align-items: center;
+  color: gray;
+  padding: 10px;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  background-color: #374151;
+  color: white;
+}
+
+.icon {
+  font-size: 20px;
+}
+
+.label {
+  margin-left: 10px;
+}
+
+/* Content */
+.content {
+  flex: 1;
+  background-color: #f9fafb;
+  transition: margin-left 0.3s ease;
+}
+
+.sidebar.w-20 ~ .content {
+  margin-left: 5rem;
+}

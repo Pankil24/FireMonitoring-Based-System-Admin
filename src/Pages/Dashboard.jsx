@@ -1,24 +1,21 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { FaBell, FaClipboardList, FaUsersCog } from 'react-icons/fa'
 import {
-    FaBell,
-    FaClipboardList,
-    FaUsersCog
-} from 'react-icons/fa'
-import {
-    Bar,
-    BarChart,
-    CartesianGrid,
-    Cell,
-    Legend,
-    Line,
-    LineChart,
-    Pie,
-    PieChart,
-    ResponsiveContainer,
-    Tooltip,
-    XAxis,
-    YAxis
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis
 } from 'recharts'
+import axiosHandler from '../lib/axiosInterceptor'
 
 const FireNOCDashboard = () => {
   const mockData = {
@@ -45,6 +42,8 @@ const FireNOCDashboard = () => {
     ]
   }
 
+  const [data, setData] = useState({})
+
   const COLORS = ['#FF4500', '#FF6347', '#708090']
 
   const StatCard = ({ icon: Icon, title, value }) => (
@@ -59,16 +58,57 @@ const FireNOCDashboard = () => {
     </div>
   )
 
+  const fetchDashboardData = async () => {
+    const response = await axiosHandler.get('api/dashboard')
+
+    if (response?.status === 200) {
+      setData({
+        ...response?.data,
+        monthlySubmissions: [
+          // Preserve existing data first
+          { month: 'Sep', submissions: 65 },
+          { month: 'Oct', submissions: 45 },
+          { month: 'Nov', submissions: 90 },
+          { month: 'Dec', submissions: 75 },
+          { month: 'Jan', submissions: 85 },
+          { month: 'Feb', submissions: 120 },
+          ...response?.data?.monthlySubmissions
+        ]
+      })
+    }
+  }
+
+  console.log('Data ===>', data)
+
+  useEffect(() => {
+    fetchDashboardData()
+  }, [])
+
   return (
     <div className='flex min-h-screen bg-gradient-to-br from-gray-900 to-gray-800'>
       {/* Sidebar */}
 
       {/* Main Content */}
       <div className='flex-1 p-8'>
+        {/* <div className='flex justify-between items-center mb-6'>
+          <h1 className='text-white text-2xl font-bold'>Dashboard</h1>
+          <button className='bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700'>
+            Download Reports
+          </button>
+        </div> */}
+
         <div className='grid grid-cols-1 md:grid-cols-3 gap-6 mb-8'>
-          <StatCard icon={FaUsersCog} title='Total Users' value='1,234' />
+          <StatCard
+            icon={FaUsersCog}
+            title='Total Users'
+            value={data?.totalUsers}
+          />
           <StatCard icon={FaBell} title='Active Incidents' value='12' />
-          <StatCard icon={FaClipboardList} title='NOC Requests' value='89' />
+          <StatCard
+            icon={FaClipboardList}
+            title='NOC Requests'
+            value={data?.totalNOCRequests}
+          />
         </div>
 
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8'>
@@ -78,7 +118,7 @@ const FireNOCDashboard = () => {
               NOC Submissions Overview
             </h2>
             <ResponsiveContainer width='100%' height={300}>
-              <BarChart data={mockData.monthlySubmissions}>
+              <BarChart data={data.monthlySubmissions}>
                 <CartesianGrid strokeDasharray='3 3' stroke='#444' />
                 <XAxis dataKey='month' stroke='#fff' />
                 <YAxis stroke='#fff' />
@@ -94,7 +134,7 @@ const FireNOCDashboard = () => {
               Pending Requests Trend
             </h2>
             <ResponsiveContainer width='100%' height={300}>
-              <LineChart data={mockData.pendingTrend}>
+              <LineChart data={data.pendingTrend}>
                 <CartesianGrid strokeDasharray='3 3' stroke='#444' />
                 <XAxis dataKey='date' stroke='#fff' />
                 <YAxis stroke='#fff' />
@@ -118,7 +158,7 @@ const FireNOCDashboard = () => {
           <ResponsiveContainer width='100%' height={300}>
             <PieChart>
               <Pie
-                data={mockData.approvalBreakdown}
+                data={data?.approvalBreakdown}
                 cx='50%'
                 cy='50%'
                 innerRadius={60}
@@ -126,10 +166,10 @@ const FireNOCDashboard = () => {
                 paddingAngle={5}
                 dataKey='value'
               >
-                {mockData.approvalBreakdown.map((entry, index) => (
+                {data?.approvalBreakdown?.map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
+                    fill={COLORS[index % COLORS?.length]}
                   />
                 ))}
               </Pie>

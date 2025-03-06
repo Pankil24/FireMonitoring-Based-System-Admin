@@ -34,16 +34,17 @@ const UserDetails = () => {
 
   const fetchPendingRequests = async () => {
     try {
-      const response = await axiosHandler.get('user/userDetails')
+      const response = await axiosHandler.get('/api/users')
 
       console.log('Response ==>', response)
-      if (response?.data?.code === 200) {
-        setData(response?.data?.data)
+      if (response?.status === 200) {
+        setData(response?.data)
       }
     } catch (error) {
       console.log('error:', error)
     }
   }
+  console.log('Data ==>', data)
 
   useEffect(() => {
     fetchPendingRequests()
@@ -74,7 +75,7 @@ const UserDetails = () => {
         </div>
 
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-          {filteredUsers.map((user) => (
+          {data.map((user) => (
             <div
               key={user.id}
               className='bg-gray-900 rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 cursor-pointer'
@@ -85,7 +86,9 @@ const UserDetails = () => {
             >
               <div className='flex items-center space-x-4'>
                 <img
-                  src={user.avatar}
+                  src={
+                    'https://acdsinc.org/wp-content/uploads/2015/12/dummy-profile-pic.png'
+                  }
                   alt={user.name}
                   className='w-16 h-16 rounded-full object-cover'
                 />
@@ -119,7 +122,9 @@ const UserDetails = () => {
           </div>
           <div className='space-y-4 text-center'>
             <img
-              src={selectedUser.avatar}
+              src={
+                'https://acdsinc.org/wp-content/uploads/2015/12/dummy-profile-pic.png'
+              }
               alt={selectedUser.name}
               className='w-32 h-32 rounded-full object-cover mx-auto'
             />

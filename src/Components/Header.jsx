@@ -4,6 +4,7 @@ import {
   FaChartBar,
   FaClipboardList,
   FaFire,
+  FaMapMarkedAlt, // ✅ Added Google Maps icon
   FaUsersCog,
   FaSignOutAlt
 } from 'react-icons/fa'
@@ -46,7 +47,12 @@ const FireNOCDashboard = () => {
                 path: '/request-approval'
               },
               { icon: FaBell, label: 'Notifications', path: '/notifications' },
-              { icon: FaUsersCog, label: 'Users', path: '/user-details' }
+              { icon: FaUsersCog, label: 'Users', path: '/user-details' },
+              {
+                icon: FaMapMarkedAlt,
+                label: 'Google Maps',
+                path: '/google-maps'
+              } // ✅ Added Google Maps
             ].map((item, index) => (
               <Link key={index} to={item.path}>
                 <div className='flex items-center text-gray-300 hover:text-white hover:bg-gray-700 p-3 rounded-lg cursor-pointer mb-2'>
@@ -67,7 +73,9 @@ const FireNOCDashboard = () => {
               className='w-10 h-10 rounded-full border-2 border-gray-600'
             />
             {isSidebarOpen && (
-              <span className='ml-3 text-white'>{user?.userInfo?.userName}</span>
+              <span className='ml-3 text-white'>
+                {user?.userInfo?.admin?.email?.substring(0, 6)}
+              </span>
             )}
           </div>
 
@@ -75,7 +83,7 @@ const FireNOCDashboard = () => {
             className='flex items-center text-gray-300 hover:text-white hover:bg-gray-700 p-3 rounded-lg cursor-pointer mt-3'
             onClick={() => {
               dispatch(logout())
-              navigate("/sign-up")
+              navigate('/sign-up')
             }}
           >
             <FaSignOutAlt className='text-xl' />
